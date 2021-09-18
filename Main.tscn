@@ -1,0 +1,86 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Assets/Textures/TexturesCom_MetalFloorsBare0063_2_seamless_S.jpg" type="Texture" id=1]
+[ext_resource path="res://Assets/Cars/Caterham/Car.tscn" type="PackedScene" id=2]
+[ext_resource path="res://TrackGen.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Road.tres" type="Material" id=4]
+[ext_resource path="res://Camera.gd" type="Script" id=13]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 100, 1, 100 )
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_texture = ExtResource( 1 )
+roughness = 0.0
+uv1_scale = Vector3( 500, 500, 500 )
+
+[sub_resource type="PlaneMesh" id=3]
+material = SubResource( 2 )
+size = Vector2( 200, 200 )
+subdivide_width = 10
+subdivide_depth = 10
+
+[sub_resource type="Curve3D" id=4]
+_data = {
+"points": PoolVector3Array( -0.112286, 0, 8.8523, 0.112286, 0, -8.8523, -13.0582, 0, -0.578531, 4.04679, 0, 10.4365, -4.04679, 0, -10.4365, -25.7658, 0, -32.7732, -9.82511, 3.05176e-05, 1.67865, 7.82684, 0, -1.26921, -13.538, 0.946259, -53.9205, -9.27357, 0, -1.05381, 9.66233, 0, 1.59475, 16.506, 1.44971, -55.2437, -8.81635, 0.528272, -10.447, 8.81635, -0.528272, 10.447, 48.7498, 2.19551, -40.7989, 6.46703, 0.27356, -10.975, -10.89, -1.92981, 21.153, 54.3213, 1.58044, 4.22866, 9.64731, 0.165562, -4.28749, -9.64731, -0.165562, 4.28749, 13.7677, 0.778259, 4.89361, -14.3528, 0.154785, -5.90997, 27.2984, 0, 8.53662, 18.2203, 1.24829, 29.3211, 13.6019, -0.0952153, 3.85365, -13.6019, 0.0952153, -3.85365, 7.10117, 0.904663, 54.2571, 10.2589, 7.62939e-06, -3.5162, -12.737, 7.62939e-06, 3.99148, -39.6793, 1.01244, 50.4643, 2.69788, -7.62939e-06, 10.9375, -1.298, 0, -9.82235, -70.15, 0.586433, 29.8747, -0.543571, 0, 5.3295, 0.546944, 0, -7.05108, -73.664, 0.852806, -1.19168, -11.7969, 1.52588e-05, 3.6715, 8.59801, 1.52588e-05, -1.82625, -61.092, 1.04198, -26.1916, -6.93944, 0.00012207, -4.05006, 7.39302, 0, 6.12564, -36.3325, 1.14636, -25.3274, 5.0923, 0, -8.06281, -3.60705, 0, 10.3968, -36.28, 0.527588, 3.20657, -6.81566, 0, -3.40783, 8.09359, 0, 3.40782, -29.5996, 0, 27.2898, -2.76887, 0, 8.0936, 4.25979, 0, -9.79751, -6.80976, 0, 23.8819, -0.0315876, 0, 9.75992, 0, 0, 0, -13.1315, 0, 0.101794 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, -0.5, 0, 0, -0.2, -0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[node name="Main" type="Spatial"]
+
+[node name="Ground" type="StaticBody" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Ground"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.235336, 0.00349045, 0.676178 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="Sun" type="DirectionalLight" parent="."]
+transform = Transform( 0.353542, 0.746557, -0.563615, -0.565523, 0.650531, 0.506945, 0.745112, 0.139511, 0.652185, 0, 4.1408, 0 )
+shadow_enabled = true
+directional_shadow_max_distance = 200.0
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 3, -5 )
+script = ExtResource( 13 )
+follow_this_path = NodePath("../Car")
+target_distance = 10.0
+target_height = 5.0
+
+[node name="Car" parent="." instance=ExtResource( 2 )]
+angular_damp = 1.0
+
+[node name="CameraTarget" type="Spatial" parent="Car"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+
+[node name="Track" type="Path" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0 )
+visible = false
+curve = SubResource( 4 )
+
+[node name="Road" type="CSGPolygon" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.569218, 1.22386, -0.0693855 )
+invert_faces = true
+polygon = PoolVector2Array( -4, 0, -10, -6, 10, -6, 4, 0 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = true
+material = ExtResource( 4 )
+
+[node name="TrackGen" parent="." instance=ExtResource( 3 )]
+
+[node name="TrackGen2" parent="." instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20.5546, 0, -68.5212 )
+track_layout = [ 1, 0, 0 ]
+
+[node name="TrackGen3" parent="." instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20.5546, 0, -88.7831 )
+track_layout = [ 7 ]
